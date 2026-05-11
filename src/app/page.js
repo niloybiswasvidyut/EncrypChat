@@ -198,7 +198,7 @@ export default function Home() {
             <div className="mt-5 flex items-center justify-between text-sm text-silver/80">
               {authMode === "login" ? (
                 <>
-                  <Link href="/recover" className="text-silver hover:text-white hover:underline">
+                  <Link href="/recover" className="text-silver hover:text-white hover:underline cursor-pointer">
                     Forgot password?
                   </Link>
                   <button

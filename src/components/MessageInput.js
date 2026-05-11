@@ -19,23 +19,21 @@ export default function MessageInput({ onSend }) {
     await onSend({ body: value.trim(), file });
     setValue("");
     setFile(null);
+
     if (fileRef.current) {
       fileRef.current.value = "";
     }
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="border-t border-slate bg-carbon p-4"
-    >
+    <form onSubmit={handleSubmit} className="bg-black p-4">
       <div className="flex items-center gap-2">
         <Input
           value={value}
           onChange={(event) => setValue(event.target.value)}
           placeholder="Type an encrypted message..."
         />
-        <label className="inline-flex cursor-pointer items-center justify-center rounded-xl border border-slate p-3 text-silver/85 hover:bg-slate/40">
+        <label className="inline-flex cursor-pointer items-center justify-center rounded-xl bg-[#151515] p-3 text-white/85 hover:bg-[#232323]">
           <FiPaperclip />
           <input
             ref={fileRef}
@@ -44,11 +42,11 @@ export default function MessageInput({ onSend }) {
             onChange={(event) => setFile(event.target.files?.[0] || null)}
           />
         </label>
-        <Button type="submit" className="h-11 w-11 rounded-xl p-0">
+        <Button type="submit" className="h-11 w-11 rounded-xl p-0 bg-[#e5e5e5] text-black hover:bg-white">
           <FiSend />
         </Button>
       </div>
-      {file && <p className="mt-2 text-xs text-silver/65">Attachment: {file.name}</p>}
+      {file && <p className="mt-2 text-xs text-white/70">Attachment: {file.name}</p>}
     </form>
   );
 }

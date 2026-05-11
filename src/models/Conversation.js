@@ -7,6 +7,7 @@ const ConversationSchema = new Schema(
     description: { type: String, default: "" },
     participants: [{ type: Schema.Types.ObjectId, ref: "User", required: true }],
     admins: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    deletedBy: [{ type: Schema.Types.ObjectId, ref: "User" }],
     lastMessageAt: { type: Date, default: Date.now },
   },
   { timestamps: true }

@@ -13,50 +13,42 @@ function getPusherInstance() {
   if (!pusherInstance) {
     const key = process.env.NEXT_PUBLIC_PUSHER_KEY;
     const cluster = process.env.NEXT_PUBLIC_PUSHER_CLUSTER;
-  console.log(`[Pusher] Initializing: key=${!!key}, cluster=${cluster}`);
 
     if (key && cluster) {
       pusherInstance = new PusherClient(key, { cluster });
-      console.log(`[Pusher] Instance created successfully`);
-    } else {
-      console.warn(`[Pusher] Missing credentials: key=${!!key}, cluster=${!!cluster}`);
     }
   }
 
   return pusherInstance;
 }
 
-export function useSocket({ conversationId, onMessage }) {
+export function useConversationSocket({ userId, onNewConversation }) {
   const channelRef = useRef(null);
 
   useEffect(() => {
-    if (!conversationId || !onMessage) {
+    if (!userId || !onNewConversation) {
       return undefined;
     }
 
     const pusher = getPusherInstance();
     if (!pusher) {
-      console.log(`[Socket] Pusher instance not available`);
       return undefined;
     }
 
-    const channelName = `conversation-${conversationId}`;
-    console.log(`[Socket] Subscribing to channel: ${channelName}`);
+    const channelName = `user-${userId}`;
     const channel = pusher.subscribe(channelName);
     channelRef.current = channel;
 
-    channel.bind("new-message", (payload) => {
-      console.log(`[Socket] Received message event:`, payload);
-      onMessage(payload.message);
+    channel.bind("new-conversation", (payload) => {
+      onNewConversation(payload.conversation);
     });
 
     return () => {
       if (channelRef.current) {
-        console.log(`[Socket] Unsubscribing from channel: ${channelName}`);
-        channelRef.current.unbind("new-message", onMessage);
+        channelRef.current.unbind("new-conversation", onNewConversation);
         pusher.unsubscribe(channelName);
         channelRef.current = null;
       }
     };
-  }, [conversationId, onMessage]);
+  }, [userId, onNewConversation]);
 }

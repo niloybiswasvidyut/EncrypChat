@@ -3,7 +3,15 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/auth";
 import { connectDB } from "@/lib/mongodb";
 import { createConversationSchema } from "@/lib/validators";
+import { getPusherServer } from "@/lib/pusher";
 import { Conversation } from "@/models/Conversation";
+
+async function populateConversation(conversationDoc) {
+  return Conversation.populate(conversationDoc, {
+    path: "participants",
+    select: "_id name email avatarUrl",
+  });
+}
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -13,10 +21,14 @@ export async function GET() {
 
   await connectDB();
 
+  const userId = session.user.id;
+
   const conversations = await Conversation.find({
-    participants: session.user.id,
+    participants: userId,
+    $or: [{ deletedBy: { $exists: false } }, { deletedBy: { $nin: [userId] } }],
   })
     .sort({ lastMessageAt: -1 })
+    .populate("participants", "_id name email avatarUrl")
     .lean();
 
   return NextResponse.json({ conversations });
@@ -52,7 +64,19 @@ export async function POST(request) {
       lastMessageAt: new Date(),
     });
 
-    return NextResponse.json({ conversation }, { status: 201 });
+    const populatedConversation = await populateConversation(conversation);
+
+    // Notify all participants about the new conversation via Pusher
+    const pusher = getPusherServer();
+    if (pusher) {
+      for (const participantId of uniqueParticipants) {
+        await pusher.trigger(`user-${participantId}`, "new-conversation", {
+          conversation: populatedConversation,
+        });
+      }
+    }
+
+    return NextResponse.json({ conversation: populatedConversation }, { status: 201 });
   } catch (error) {
     return NextResponse.json(
       { error: error.message || "Conversation creation failed" },

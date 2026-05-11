@@ -2,13 +2,13 @@
 
 :root {
   --background: #000000;
-  --foreground: #ccc9dc;
+  --foreground: #ffffff;
 
   --blackcore: #000000;
-  --carbon: #0c1821;
-  --midnight: #1b2a41;
-  --slate: #324a5f;
-  --silver: #ccc9dc;
+  --carbon: #111111;
+  --midnight: #2a2a2a;
+  --slate: #5f5f5f;
+  --silver: #d9d9d9;
   --online: #22c55e;
 
   --radius: 0.75rem;
@@ -49,7 +49,7 @@ body {
 }
 
 .glass-panel {
-  background: color-mix(in srgb, var(--carbon) 92%, black);
+  background: color-mix(in srgb, var(--blackcore) 92%, var(--carbon));
   backdrop-filter: blur(8px);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
 }
@@ -72,4 +72,13 @@ body {
 
 .animate-float-in {
   animation: floatIn 0.5s ease forwards;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
 }

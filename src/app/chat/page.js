@@ -18,6 +18,11 @@ export default function ChatPage() {
     setActiveConversation,
     messages,
     sendMessage,
+    addConversation,
+    deleteConversation,
+    hasMoreMessages,
+    loadingMoreMessages,
+    loadOlderMessages,
   } = useChat();
 
   useEffect(() => {
@@ -28,7 +33,7 @@ export default function ChatPage() {
 
   const title = useMemo(() => {
     if (!activeConversation) return "No conversation selected";
-    return activeConversation.name || "Direct Chat";
+    return activeConversation.displayName || activeConversation.name || "Direct Chat";
   }, [activeConversation]);
 
   async function logout() {
@@ -38,7 +43,7 @@ export default function ChatPage() {
   if (status !== "authenticated") {
     return (
       <main className="container-grid py-6">
-        <section className="glass-panel rounded-2xl border border-slate p-6 text-sm text-silver/85">
+        <section className="glass-panel rounded-2xl border border-[#1f1f1f] p-6 text-sm text-silver/85">
           Checking authentication...
         </section>
       </main>
@@ -47,25 +52,38 @@ export default function ChatPage() {
 
   return (
     <main className="container-grid py-4">
-      <section className="glass-panel h-[85vh] overflow-hidden rounded-2xl border border-slate md:flex">
+      <section className="glass-panel h-[85vh] overflow-hidden rounded-2xl bg-black md:flex">
         <Sidebar
+          className="md:border-r md:border-[#1f1f1f]"
           conversations={conversations}
           selectedId={activeConversation?._id}
           onSelect={setActiveConversation}
+          onCreateConversation={addConversation}
+          onDeleteConversation={deleteConversation}
         />
 
-        <div className="flex flex-1 flex-col">
-          <header className="flex items-center justify-between border-b border-slate p-4 md:p-5">
+        <div className="flex flex-1 flex-col bg-black">
+          <header className="flex items-center justify-between border-b border-[#1f1f1f] bg-black p-4 md:p-5">
             <div>
-              <h1 className="text-lg font-semibold text-silver">{title}</h1>
-              <p className="text-xs text-silver/65">Realtime + encrypted payload messaging</p>
+              <h1 className="text-lg font-semibold text-white">{title}</h1>
+              <p className="text-xs text-white/70">Realtime + encrypted payload messaging</p>
             </div>
-            <Button variant="outline" onClick={logout}>
+            <Button
+              variant="outline"
+              onClick={logout}
+              className="bg-[#1f1f1f] text-white hover:bg-[#2b2b2b]"
+            >
               Logout
             </Button>
           </header>
 
-          <ChatBox messages={messages} currentUserId={session?.user?.id} />
+          <ChatBox
+            messages={messages}
+            currentUserId={session?.user?.id}
+            hasMoreMessages={hasMoreMessages}
+            loadingMoreMessages={loadingMoreMessages}
+            onLoadOlderMessages={loadOlderMessages}
+          />
           <MessageInput onSend={sendMessage} />
         </div>
       </section>

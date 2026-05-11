@@ -240,7 +240,7 @@ export default function RecoverPage() {
         <div className="mt-6 text-center text-sm text-silver/70">
           <p>
             Remember your password?{" "}
-            <Link href="/login" className="text-cyan-400 hover:underline">
+            <Link href="/login" className="text-cyan-400 hover:underline cursor-pointer">
               Back to login
             </Link>
           </p>

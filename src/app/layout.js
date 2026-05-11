@@ -23,7 +23,7 @@ export default function RootLayout({ children }) {
       lang="en"
       className={`${outfit.variable} ${spaceGrotesk.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col bg-black text-white">
         <AuthSessionProvider>{children}</AuthSessionProvider>
       </body>
     </html>
